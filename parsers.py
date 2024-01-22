@@ -26,9 +26,7 @@ def parse_reports_by_inn(inn):
     search_button = driver.find_element(By.ID, 'sendButton')
     search_button.click()
     wait = WebDriverWait(driver, 10)
-
-    # cont_wrap_element = wait.until(EC.visibility_of_element_located((By.ID, 'cont_wrap')))
-
+    cont_wrap_element = wait.until(EC.visibility_of_element_located((By.ID, 'cont_wrap')))
     page_source = driver.page_source
     soup = BeautifulSoup(page_source, 'html.parser')
     company_link_element = soup.find('div', {'id': 'cont_wrap'}).find('a')
@@ -39,9 +37,7 @@ def parse_reports_by_inn(inn):
     driver.get(full_company_link)
     otchetnost_tab_element = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, 'Отчетность')))
     otchetnost_tab_element.click()
-
-    # otchetnost_list_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[style="list-style-type: none;"]')))
-
+    otchetnost_list_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[style="list-style-type: none;"]')))
     page_source_otchetnost = driver.page_source
     soup_otchetnost = BeautifulSoup(page_source_otchetnost, 'html.parser')
     otchetnost_block = soup_otchetnost.find('ul', {'style': 'list-style-type: none;'})

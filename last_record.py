@@ -6,8 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from datetime import datetime
+import time
 from selenium.common.exceptions import TimeoutException
-
 
 def parse_last_report_by_inn(inn):
     # Создаем экземпляр браузера
@@ -29,6 +29,7 @@ def parse_last_report_by_inn(inn):
 
     # Ждем, пока элемент с id 'cont_wrap' станет видимым (ждем не более 10 секунд)
     wait = WebDriverWait(driver, 10)
+    cont_wrap_element = wait.until(EC.visibility_of_element_located((By.ID, 'cont_wrap')))
 
     # После успешного ожидания, продолжаем парсить страницу
     page_source = driver.page_source
@@ -52,6 +53,9 @@ def parse_last_report_by_inn(inn):
     otchetnost_tab_element = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, 'Отчетность')))
     otchetnost_tab_element.click()
 
+    # Ждем, пока появится список отчетности
+    otchetnost_list_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[style="list-style-type: none;"]')))
+
     # После успешного ожидания, продолжаем парсить страницу "Отчетность"
     page_source_otchetnost = driver.page_source
     soup_otchetnost = BeautifulSoup(page_source_otchetnost, 'html.parser')
@@ -68,6 +72,9 @@ def parse_last_report_by_inn(inn):
 
     # Формируем абсолютную ссылку
     last_otchetnost_full_link = urljoin(base_url, last_otchetnost_relative_link)
+
+    # Получаем текущую дату в формате "дд.мм.гггг"
+    current_date_str = datetime.now().strftime("%d.%m.%Y")
 
     # Переходим по ссылке последнего отчета
     driver.get(last_otchetnost_full_link)
@@ -93,8 +100,10 @@ def parse_last_report_by_inn(inn):
 
         # Извлекаем дату размещения
         approval_date_cell = cells[4].text.strip()
+
+        # Пробуем извлечь дату из строки
         try:
-            approval_date = datetime.strptime(approval_date_cell, "%d.%m.%Y").strftime("%d.%m.%Y")
+            approval_date = datetime.strptime(approval_date_cell, "%d.%m.%Y").strftime("%d.%m.%Y %H:%M")
         except ValueError:
             # Если не удается преобразовать дату, используем исходный текст
             approval_date = approval_date_cell

@@ -9,9 +9,9 @@ from parsers import parse_reports_by_inn
 from last_record import parse_last_report_by_inn
 from aiocron import crontab
 
-
-bot = Bot(token='')
-dp = Dispatcher(bot)
+with open('token.txt') as token_file:
+    bot = Bot(token=token_file.readline())
+    dp = Dispatcher(bot)
 logging.basicConfig(level=logging.INFO)
 
 

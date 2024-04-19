@@ -10,7 +10,7 @@ from last_record import parse_last_report_by_inn
 from aiocron import crontab
 
 
-bot = Bot(token='6676754379:AAEvCakvWoobW_EBgYzjRTlFLtpcG00qbno')
+bot = Bot(token='YOUR_TOKEN')
 dp = Dispatcher(bot)
 logging.basicConfig(level=logging.INFO)
 
